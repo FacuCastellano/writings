@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My blog | login</title>
+    <link rel='stylesheet' href='../stylesheets/login-register.css'/>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Welcome!</h1>
+            <p>Please fill the form with your data</p>
+        </div>
+            
+        <div class="login-body">
+            <form action="http://localhost:3000/register" method="post">
+
+                <div class="login-generic-camp">
+                    <input type="text" id="register-username" name="user-name" required placeholder="User name (you'll login with this name)" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="text" id="register-real-name" name="real-name" required placeholder="Name" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="text" id="register-real-surname" name="real-surname" required placeholder="lastname" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="email" id="register-email" name="email" required placeholder="email" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="password" id="password-1" name="pass1" required placeholder="choose a password" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="password" id="password-2" name="pass2" required placeholder="repeat your password" autofocus>
+                </div>
+                <div class="login-generic-camp login-btn-container">
+                    <input type="submit" class="btn"  value="Send">
+                    <br>
+                    <p>If you already have an account <a href="./index.html"> login here.</a></p>
+                </div>
+
+            </form>
+        </div>  
+    </div>
+    
+</body>
+</html>

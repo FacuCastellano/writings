@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My blog | login</title>
+    <link rel='stylesheet' href='../stylesheets/login-register.css'/>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Hello!</h1>
+            <p>Please enter your user and password</p>
+        </div>
+            
+        <div class="login-body">
+            
+            <form action="http://localhost:3000/login" method="post" >
+
+                <div class="login-generic-camp">
+                    <input type="text" id="userName" name="user-name" required placeholder="User name" autofocus>
+                </div>
+                <div class="login-generic-camp">
+                    <input type="password" id="password" name="pass" required placeholder="Password" autofocus>
+                </div>
+                <div class="login-generic-camp login-btn-container">
+                    <input type="submit" class="btn" id="btn-submit" value="Send">
+                    <br>
+                    <p>If you don't have an account <a href="./register.html"> Join us here.</a></p> <!-- aca el href esta con ./ pq el archivo registers.html va a estar ubicado en la misma carpeta "views" de donde voy a almacenar este archivo 'index-html', como ambos archivos van a estar en la capeta 'public que la voy a 'servir' con expres.. lo que pasa es que voy a acceder a estos archivos desde el navegador-->
+                </div>
+            
+            </form>
+        </div>
+
+    </div>
+    <script src="../scripts/index.js"></script>
+</body>
+</html>

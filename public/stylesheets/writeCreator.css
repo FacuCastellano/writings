@@ -1,0 +1,112 @@
+:root{
+    --body-bg-color:rgb(128, 191, 211);
+    --maindiv-bg-color:rgb(105, 187, 183);
+    --content-bg-color:rgb(219, 209, 245);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    
+}
+
+
+.mainDiv{
+    background-color:var(--body-bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px;
+    padding-bottom: 150px;
+}
+/* los estilos del titulo*/
+.title-container,.checkbox-container {
+    margin: 30px;
+    width: 500px;
+    height: auto;
+    padding:15px 0;
+    border-radius: 25px;
+    background-color: var(--content-bg-color);
+    border: solid 4px white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+}
+.title-container h2 {
+    padding: 0px 25px;
+    background-color:transparent;
+    font-size: 22px;
+
+}
+.title-container input {
+
+    font-size: 19px;
+    width: 71%;
+    box-shadow: none;
+}
+
+/* los estilos del cuerpo del texto*/
+
+.mainContainer{
+    width: 500px;
+    min-height: 400px;
+    padding:25px 0;
+    border-radius: 25px;
+    background-color: var(--maindiv-bg-color);
+    border: solid 4px white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.mainContainer textarea{
+    width: 80%;
+    background-color: white;
+    font-size: 14px;
+}
+
+.author {
+    padding: 20px 40px 0 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    
+}
+.checkbox-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.radiobutton-container{
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+/*estilos del boton submit*/
+.submit-btn-container {
+    margin: 25px 0;
+    padding: 0px;
+    width:500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn{
+    padding: 15px 0px;
+    width: 50%;
+    border: solid 4px white;
+    border-radius: 5px;
+    background-color: cornflowerblue;
+    margin-bottom: 20px;
+}
+
+.btn:active{
+    transform:scale(0.95)
+}
