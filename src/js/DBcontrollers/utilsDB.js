@@ -59,46 +59,48 @@ function createNewUser(data){
 
 // funcion de validacion del usuario. 
 
-function loginUserValidation2(data){
-    const {username, pass} = data
-    query = `select * from users where username='${username}';`
-    //esta funcion retorna una promesa, a esta la concateno a otras promesas.. y en definitiva termina retornando el ultimo return concatenado a esta cadena de promesas.. 
-    //igualmente despues para usarla tengo que usar then() catch() para capturar la promesa una vez resuelta.
-    return new Promise((resolve,reject) => {
-        connection.query(query,(_,res)=>{
-            resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
-        })
-    })
-    .then((res)=>{
-            if(res.length === 0){
-                // si entra aca es pq el usuario no existe.
-                return(false) //este valor se pasa como param al otro then.().. 
-            }else {
-                //si entra aca es pq el usuario si existe.
-                return([true, JSON.parse(JSON.stringify(res))[0]])  // la respuesta es un tipo raro de objeto ' RowDataPacket {con la info aca}', para hacerlo un objeto de JS tengo que hacerlo primerpo un string con stringify y despues lo parseo a objeto... y en segunda instancia tengo que sacarlo como el primer elmento de un array de un elemento.
-            }  
-    }).then(param => {
-            //console.log(param)
-            if(param === false){
-                //el usuario no existe.
-                return 404
-            }else {
-                const userData = param[1]
-                if(userData.pass === pass){
-                    //usuario y contraseña verificados.
-                    return [200, userData]
-                }else{
-                    //el usuario exisite pero la contraseña es incorrecta.
-                    return 401
-                }
-            }
-        })
-}
+// function loginUserValidation2(data){
+//     const {username, password} = data
+//     query = `select * from users where username='${username}';`
+//     //esta funcion retorna una promesa, a esta la concateno a otras promesas.. y en definitiva termina retornando el ultimo return concatenado a esta cadena de promesas.. 
+//     //igualmente despues para usarla tengo que usar then() catch() para capturar la promesa una vez resuelta.
+//     return new Promise((resolve,reject) => {
+//         connection.query(query,(_,res)=>{
+//             resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
+//         })
+//     })
+//     .then((res)=>{
+//             if(res.length === 0){
+//                 // si entra aca es pq el usuario no existe.
+//                 return(false) //este valor se pasa como param al otro then.().. 
+//             }else {
+//                 //si entra aca es pq el usuario si existe.
+//                 console.log(JSON.parse(JSON.stringify(res))[0])
+//                 return([true, JSON.parse(JSON.stringify(res))[0]])  // la respuesta es un tipo raro de objeto ' RowDataPacket {con la info aca}', para hacerlo un objeto de JS tengo que hacerlo primerpo un string con stringify y despues lo parseo a objeto... y en segunda instancia tengo que sacarlo como el primer elmento de un array de un elemento.
+//             }  
+//     }).then(param => {
+//             //console.log(param)
+//             if(param === false){
+//                 //el usuario no existe.
+//                 return 404
+//             }else {
+//                 const userData = param[1]
+//                 if(userData.password === password){
+//                     //usuario y contraseña verificados.
+//                     return [200, userData]
+//                 }else{
+//                     //el usuario exisite pero la contraseña es incorrecta.
+//                     return 401
+//                 }
+//             }
+//         })
+// }
 
 // funcion de validacion del usuario. 
 
 function loginUserValidation(data){
-    const {user_name:username, pass} = data
+    //const {user_name:username, pass} = data
+    const {username, password} = data
     query = `select * from users where username='${username}';`
     //esta funcion retorna una promesa, a esta la concateno a otras promesas.. y en definitiva termina retornando el ultimo return concatenado a esta cadena de promesas.. 
     //igualmente despues para usarla tengo que usar then() catch() para capturar la promesa una vez resuelta.
@@ -122,7 +124,7 @@ function loginUserValidation(data){
                 return 404
             }else {
                 const userData = param[1]
-                if(userData.pass === pass){
+                if(userData.pass=== password){
                     //usuario y contraseña verificados.
                     return [200, userData]
                 }else{
@@ -137,32 +139,27 @@ function loginUserValidation(data){
 
 //funcion para crear un nuevo escrito.
 function createWriting(data){
-    const id =  3
-    const text_number = 1
-    const title = 'el titulo de mi escrito'
-    const texto = 'bla bla bla bla'
-    const author = 'facu'
-    const public_state = 0
-    const stage_name = 'facuntano'
+    const {id, username,title,texto,public_state} = data
+    const text_number = 1 //este numero deberia representar el numero de escrito de la persona.. pero por ahora lo dejamos asi. 
+    const author = username 
+    const stage_name = '-'  //hay que agregar la funcionalidad de que se pueda firmar con el stage_name.
     const query =  `INSERT INTO writings VALUES ('${id}','${text_number}','${title}','${texto}','${author }',${public_state},'${stage_name}',now());`
-    
     return new Promise((resolve,reject) => {
         connection.query(query,(_,res)=>{
             resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
         })
     })
-    .then(res => console.log(res))
+    .then((res) => console.log(res))
     .catch(err => console.log(err))
 }
 //createWriting()
 // INSERT INTO writings VALUES ('3','1','mi primer escrito','bla bla bla bla','florpicco',1,'facuntano',now());
 
-
+//const data1 = {id:"1234", username:"facu",title:"titulo desde data1",texto:"un texto desde data1",public_state:0}
 
 module.exports = {
      connection,
      createNewUser,
      loginUserValidation,
-     loginUserValidation2,
      createWriting
  }

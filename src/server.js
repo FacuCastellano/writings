@@ -2,18 +2,12 @@
 const http = require('http')
 const express = require('express')
 const path = require('path')
-const ejs = require('ejs')
-const bodyParser = require('body-parser')
-
+const crypto = require('crypto')
 
 
 //importo modulos propios
-const { createNewUser, connection, loginUserValidation, loginUserValidation2} = require('./js/DBcontrollers/utilsDB')
+const { createNewUser, connection, loginUserValidation, createWriting} = require('./js/DBcontrollers/utilsDB')
 const { toJSObject} = require('./js/serverFunctions.js')
-
-
-
-
 
 console.log(path.join(__dirname,'public/views'))
 
@@ -36,7 +30,7 @@ const app = express()
 //una vez servidos puedo acceder a estos. 
 app.use(express.static('./public'))
 app.use(express.json()) // ---> este middleware lo tengo que poner para poder leer los JSON que envia el cliente.. sino me va dar los json como undefined.
-app.use(bodyParser.urlencoded({ extended: true }))
+//app.use(bodyParser.json())
 
 
 //settings
@@ -52,20 +46,9 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/writeCreator', (req, res) => {
-    //aca tiene q ir el login del usuario usando el username y la pass guardada en el sessionStore.
-    res.render('writeCreator.ejs')
-   // res.send('<h2>entro pero no se que mandar</h2>')
-  
-})
 
-app.post('/userData',(req,res)=> {
-    console.log(req.body)
-    const name = req.body.name
-    const password = req.body.password
-    res.cookie('userValidation',[name, password])
-    res.sendStatus(200)
-})
+
+
 
 //rutas POST
 // registro de nuevo usuario
@@ -90,87 +73,63 @@ app.post('/register', (req,res)=>{
 })
 
 // logeo de usuario existente.
-app.post('/login', (req,res)=>{
-    let body = ''
-    req.on('data', chunk =>{body += chunk})
-    req.on('end', ()=>{
-        body = toJSObject(body) //esta es una funcion propia que esta en el modulo serverFunctions.js
-        // esta funcion necesita que exista una conexion a la BD y devuelvuelve 'failure'(si el usuario ya existe) o 'success' (si el usuario es creado con existo)         
-        loginUserValidation(body)
+app.post('/login', (req,res)=>{ 
+    console.log(req.body)
+    loginUserValidation(req.body)
             .then(answerCode  =>{
-                console.log('answerCode: ',answerCode)
+                //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
                 if(answerCode === 404){
-                    res.redirect('views/login404.html')
+                    res.status(404)
+                    res.end()
                 } else if (answerCode === 401){
-                    res.redirect('views/login401.html')
+                    res.status(401)
+                    res.end()
                 } else if (Array.isArray(answerCode)){
-                    const userData = answerCode[1]
-                    res.render('userMain.ejs',{userData}) //por mas que userData sea un objeto, tengo que ponerlo entre corchetes pq sino EJS tira un error.
+                    res.status(200)
+                    res.end()
                 }
-            }) 
-    })
+    }) 
+
+})
+// subiendo un nuevo writing.
+app.post('/writeCreator', (req, res) => {
+
+    console.log(req.body)
+    const {username,password} = req.body
+    console.log(username,password)
+    loginUserValidation({username,password})
+            .then(answerCode  =>{
+                console.log(answerCode)
+                //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+                if(answerCode === 404){
+                    //desde el front lo tengo que redirigir.
+                    res.status(404)
+                    res.end()
+                } else if (answerCode === 401){
+                    //desde el front lo tengo que redirigir.
+                    res.status(401)
+                    res.send()
+                } else if (Array.isArray(answerCode)){
+                    console.log("entre al else if")
+                    //creo el nuevo writing y despues lo redirijo desde el front.
+                    const {title,texto,public_state} = req.body
+                    const id = crypto.randomUUID() //genera un id unico .. hay muchas librerias que hacen esto pero esta ya viene con JS.
+                    data = {id,username,title,texto,public_state,id}
+                    createWriting(data)
+                        .then(resultado =>console.log(resultado))
+                        .then(()=> res.end())
+                        .catch(e => console.log(e))
+                }
+    })   
 })
 
+
+
 //este post, va a validar la session del usuario y va a devolver la data del mismo para usarla en los distintos script de la parte del cliente. 
-app.post('/get-use-all-info', (req, res) => {
-    //para que esto funcione es clave el middleware --> app.use(express.json())
-    const {username, pass} = req.body
-    const userLoginData = {username, pass}
 
-    loginUserValidation2(userLoginData).then(res => {
-        return res
-    })
-    .then(userData => {
-        if(userData === 404 ){
-            res.write("User Not Found")
-            res.status(404)
-
-        } else if (userData === 401) {
-            res.write("password Not Valid")
-            res.status(401)
-
-        } else {
-            res.status(200)
-            res.write((JSON.stringify(userData[1]))) //envioo un string del JSON {"username": "pepito"}
-        }
-    }).then(()=> res.end())
-    .catch(e => console.log(e))  
-});
 
 //similar al anterior pero solo devuelvo el nombre del usuario, no devuelvo todos los datos.
-app.post('/get-user-name', (req, res) => {
-    //para que esto funcione es clave el middleware --> app.use(express.json())
-    const {username, pass} = req.body
-    const userLoginData = {username, pass}
 
-    loginUserValidation2(userLoginData).then(res => {
-        return res
-    })
-    .then(userData => {
-        if(userData === 404 ){
-            res.write("User Not Found")
-            res.status(404)
-
-        } else if (userData === 401) {
-            res.write("password Not Valid")
-            res.status(401)
-
-        } else {
-            const user = JSON.parse(JSON.stringify(userData[1])).username //recupero el nombre del usuario.
-            console.log(user)
-            res.write(JSON.stringify({username:user})) //envioo un string del JSON {"username": "pepito"}
-        }
-    }).then(()=> res.end())
-    .catch(e => console.log(e))  
-});
-
-app.post('/send-writing', (req, res) => {
-    console.log('entro a la ruta send-writing')
-    
-    console.log(res.body)
-    
-    
-});
 
 
 app.listen(3000)

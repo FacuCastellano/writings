@@ -11,32 +11,37 @@
 
     <div class="login-container">
         <div class="login-header">
-            <h1>Upss...</h1>
+            <h1>Uppss..</h1>
             <p>
-                The password was not correct. 
-                <br>
-                please try again.
+                Password is not correct.<br> 
+                Please try again.
             </p>
-        </div>
         
+        </div>
+            
         <div class="login-body">
             
-            <form action="http://localhost:3000/login" method="post" >
+            <div>  <!-- <form> -->  <!-- esto lo hago con un div, pq la solicitud la hago desde JS y si hago un form, entran en conflicto las dos cosas.-->
+            <!--
+                <form action="http://localhost:3000/login" method="post" >   lo voy a enviar desde JS con un addEventListener
+             --> 
 
                 <div class="login-generic-camp">
-                    <input type="text" id="login-username" name="user-name" required placeholder="User name" autofocus>
+                    <input type="text" id="userName" name="user-name" required placeholder="User name1" autofocus>
                 </div>
                 <div class="login-generic-camp">
-                    <input type="password" id="password-1" name="pass" required placeholder="Password" autofocus>
+                    <input type="password" id="password" name="pass" required placeholder="Password" autofocus>
                 </div>
                 <div class="login-generic-camp login-btn-container">
-                    <input type="submit" class="btn"  value="Send">
+                    <input type="button" class="btn" id="btn-submit" value="Send">
                     <br>
                     <p>If you don't have an account <a href="./register.html"> Join us here.</a></p> <!-- aca el href esta con ./ pq el archivo registers.html va a estar ubicado en la misma carpeta "views" de donde voy a almacenar este archivo 'index-html', como ambos archivos van a estar en la capeta 'public que la voy a 'servir' con expres.. lo que pasa es que voy a acceder a estos archivos desde el navegador-->
                 </div>
             
-            </form>
+            </div> <!-- </form> -->
+               
         </div>
+
     </div>
     <script src="../scripts/index.js"></script>
 </body>
