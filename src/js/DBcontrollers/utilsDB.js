@@ -136,12 +136,27 @@ function getWritings(username,page){
     const query = `select id, title from writings where author="${username}" order by date_written DESC limit ${limit} offset ${offset};`
     return new Promise((resolve, reject) => {
         connection.query(query,(_,res)=>{
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+
+function getParticularWriting(id){
+
+    const query = `select * from writings where id="${id}" ;`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
             console.log(res)
             resolve(res)
         })
     })
     .catch(e => console.log(e))
 }
+
+const id1 = "asd"
+getParticularWriting(id1)
 
 
 
@@ -156,5 +171,6 @@ module.exports = {
      loginUserValidation,
      createWriting,
      getTotalWritings,
-     getWritings
+     getWritings,
+     getParticularWriting
  }

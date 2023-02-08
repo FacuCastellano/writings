@@ -74,20 +74,20 @@ function renderTitles(page){
             div.textContent = title
             div.id = id
             writingsContainer.appendChild(div)
+            div.addEventListener('click',()=>{
+                sessionStorage.setItem("currentTextID", id) //guardo el id del texto, en el sessionStorage para poder rescatarlo desde el "writing.html"
+                location.href = "./writing.html"
+                })
             })
         })
     .catch(e => console.log(e))
 }
 
+// automaticamente renderizo la pagina 1.. que va a  mostrar los ultimos 12 escritos del usuario.
 renderTitles(1)
-
-
-
-
 
 //
 const leftButton = document.getElementById("leftButton")
-
 const rightButton = document.getElementById("rightButton")
 
 rightButton.addEventListener('click',()=>{
