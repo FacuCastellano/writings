@@ -17,6 +17,12 @@ if(username !== null){
     location.href = "./index.html"
 }
 
+//creo la funcion del boton back.
+const backButton = document.getElementById('back-button')
+backButton.addEventListener("click",()=>{
+    location.href = "./userMain.html"
+})
+
 //voy a crear la funcion que envie la info al servidor. 
 
 const submitButton = document.getElementById('submit-button')
@@ -29,34 +35,50 @@ submitButton.addEventListener("click",()=>{
     const RBprivate = document.getElementById('btn-private')
     const RBpublic = document.getElementById('btn-public')
     let RBselected
-    console.log("condcion: ",RBprivate.checked )
+    console.log("title: ",title.value)
+    console.log("texto: ",bodytext.value)
     //aca veo que valor del radio button esta seleccionado.
     if(RBprivate.checked){
         RBselected = "1" //1 significa privado
     }else{
         RBselected = "0" //0 significa publico.
     } 
-    //segundo seteo el json para enviarlo.
-    body = {
-        "username":username,
-        "password": password,
-        "title" : title.value,
-        "texto" : bodytext.value,
-        "public_state": RBselected
-    }
     
-    const url = 'http://localhost:3000/writeCreator'
-    fetch(url,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    })
-    .then(res =>{
-        console.log(res.status)
-    })
-    .catch(e => console.log(e))   
+    //verifico que no intente mandar un documento sin titulo o sin cuerpo.
+    if(title.value === '' || bodytext.value  === ''){
+        alert('WARNING! \n\nThe writing was not sended!\nThe writing have to have both, a tittle and a text-body')
+    } else {
+        
+        //segundo seteo el json para enviarlo.
+        body = {
+            "username":username,
+            "password": password,
+            "title" : title.value,
+            "texto" : bodytext.value,
+            "public_state": RBselected
+        }
+        const url = 'http://localhost:3000/writeCreator'
+        fetch(url,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        .then(() =>{
+            //aca seteo en blanco para que escriba un nuevo titulo. 
+            title.value = '';
+            bodytext.value = '';
+            RBpublic.checked = false; 
+            RBprivate.checked = true;
+            alert('Congratulations!\n\n Your writing was saved carrectly!\nFeel you free to write another one!')
+        })
+        .catch(e => console.log(e))
+    
+    }
+
+
+      
     
 
 })

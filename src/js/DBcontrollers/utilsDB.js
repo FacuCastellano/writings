@@ -56,47 +56,7 @@ function createNewUser(data){
     .catch(err => console.log(err))
 }
 
-
-// funcion de validacion del usuario. 
-
-// function loginUserValidation2(data){
-//     const {username, password} = data
-//     query = `select * from users where username='${username}';`
-//     //esta funcion retorna una promesa, a esta la concateno a otras promesas.. y en definitiva termina retornando el ultimo return concatenado a esta cadena de promesas.. 
-//     //igualmente despues para usarla tengo que usar then() catch() para capturar la promesa una vez resuelta.
-//     return new Promise((resolve,reject) => {
-//         connection.query(query,(_,res)=>{
-//             resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
-//         })
-//     })
-//     .then((res)=>{
-//             if(res.length === 0){
-//                 // si entra aca es pq el usuario no existe.
-//                 return(false) //este valor se pasa como param al otro then.().. 
-//             }else {
-//                 //si entra aca es pq el usuario si existe.
-//                 console.log(JSON.parse(JSON.stringify(res))[0])
-//                 return([true, JSON.parse(JSON.stringify(res))[0]])  // la respuesta es un tipo raro de objeto ' RowDataPacket {con la info aca}', para hacerlo un objeto de JS tengo que hacerlo primerpo un string con stringify y despues lo parseo a objeto... y en segunda instancia tengo que sacarlo como el primer elmento de un array de un elemento.
-//             }  
-//     }).then(param => {
-//             //console.log(param)
-//             if(param === false){
-//                 //el usuario no existe.
-//                 return 404
-//             }else {
-//                 const userData = param[1]
-//                 if(userData.password === password){
-//                     //usuario y contraseña verificados.
-//                     return [200, userData]
-//                 }else{
-//                     //el usuario exisite pero la contraseña es incorrecta.
-//                     return 401
-//                 }
-//             }
-//         })
-// }
-
-// funcion de validacion del usuario. 
+  
 
 function loginUserValidation(data){
     //const {user_name:username, pass} = data
@@ -143,15 +103,48 @@ function createWriting(data){
     const text_number = 1 //este numero deberia representar el numero de escrito de la persona.. pero por ahora lo dejamos asi. 
     const author = username 
     const stage_name = '-'  //hay que agregar la funcionalidad de que se pueda firmar con el stage_name.
-    const query =  `INSERT INTO writings VALUES ('${id}','${text_number}','${title}','${texto}','${author }',${public_state},'${stage_name}',now());`
+    const query =  `INSERT INTO writings VALUES ("${id}","${text_number}","${title}","${texto}","${author}","${public_state}","${stage_name}",now());`
+    // en la query pongo el texto entre comillas dobles por que si tiene comillas simples cierra la comilla inicial y chau.. hace bardo.. 
+    //como mejoras no deberia permitir que el ningun valor tenga comillas dobles ni el author ni el stage
     return new Promise((resolve,reject) => {
         connection.query(query,(_,res)=>{
             resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
         })
     })
-    .then((res) => console.log(res))
     .catch(err => console.log(err))
 }
+
+//esta funcion me dice la cantidad de escritos guardados en la que tiene un usuario. 
+
+function getTotalWritings(username){
+
+    const query = `select count(*) from writings where author="${username}";`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+
+//esta funcion me devuelve los titulos y id de los distintos writings del usuario. 
+//me va  devolver como maximo 12 elementos (estoy haciendo paginacion.)
+function getWritings(username,page){
+    const limit = 12
+    const offset = limit*(page-1)
+    const query = `select id, title from writings where author="${username}" order by date_written DESC limit ${limit} offset ${offset};`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
+            console.log(res)
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+
+
 //createWriting()
 // INSERT INTO writings VALUES ('3','1','mi primer escrito','bla bla bla bla','florpicco',1,'facuntano',now());
 
@@ -161,5 +154,7 @@ module.exports = {
      connection,
      createNewUser,
      loginUserValidation,
-     createWriting
+     createWriting,
+     getTotalWritings,
+     getWritings
  }

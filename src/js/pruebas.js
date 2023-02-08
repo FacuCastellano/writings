@@ -1,6 +1,3 @@
-const position = navigator.geolocation.getCurrentPosition(success)
-
-function succeess(){
-    console.log('te he encontrado')
-}
-console.log(position)
+const a = '"'
+const b = "''"
+console.log(a == b)

@@ -89,24 +89,35 @@
 }
 
 /*estilos del boton submit*/
-.submit-btn-container {
-    margin: 25px 0;
-    padding: 0px;
-    width:500px;
+
+.buttons-main-container{
+
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    width: 500px;
+    height: 50px;
+    margin-bottom: 30px;
 }
 
-.btn{
-    padding: 15px 0px;
-    width: 50%;
+
+.btn-send,.btn-back{
+    font-size: 19px;
+    padding: 0px 15px;
+    margin: 0px 25px;
+    width: 65%;
+    height:100%;
     border: solid 4px white;
-    border-radius: 5px;
+    border-radius: 12px;
     background-color: cornflowerblue;
-    margin-bottom: 20px;
+    
 }
 
-.btn:active{
+
+
+.btn-send:active, .btn-back:active{
     transform:scale(0.95)
+}
+
+.btn-back{
+    background-color: rgb(154, 206, 124);
 }

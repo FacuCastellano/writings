@@ -6,7 +6,7 @@ const crypto = require('crypto')
 
 
 //importo modulos propios
-const { createNewUser, connection, loginUserValidation, createWriting} = require('./js/DBcontrollers/utilsDB')
+const { createNewUser, connection, loginUserValidation, createWriting, getTotalWritings,getWritings} = require('./js/DBcontrollers/utilsDB')
 const { toJSObject} = require('./js/serverFunctions.js')
 
 console.log(path.join(__dirname,'public/views'))
@@ -94,12 +94,10 @@ app.post('/login', (req,res)=>{
 // subiendo un nuevo writing.
 app.post('/writeCreator', (req, res) => {
 
-    console.log(req.body)
     const {username,password} = req.body
-    console.log(username,password)
+
     loginUserValidation({username,password})
             .then(answerCode  =>{
-                console.log(answerCode)
                 //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
                 if(answerCode === 404){
                     //desde el front lo tengo que redirigir.
@@ -110,25 +108,83 @@ app.post('/writeCreator', (req, res) => {
                     res.status(401)
                     res.send()
                 } else if (Array.isArray(answerCode)){
-                    console.log("entre al else if")
                     //creo el nuevo writing y despues lo redirijo desde el front.
-                    const {title,texto,public_state} = req.body
+                    const {public_state} = req.body
+                    let {title, texto} = req.body
+                    title = title.replaceAll('"', "''") //reemplazo las comillas dobles por las simples (cada comilla doble la reemplazo por 2 comillas simples)para que no interfiera en la query que se le hace a la BD. y simulen ser dos comillas dobles.
+                    texto = texto.replaceAll('"', "''") 
+                    console.log(title,texto)
                     const id = crypto.randomUUID() //genera un id unico .. hay muchas librerias que hacen esto pero esta ya viene con JS.
                     data = {id,username,title,texto,public_state,id}
                     createWriting(data)
-                        .then(resultado =>console.log(resultado))
                         .then(()=> res.end())
                         .catch(e => console.log(e))
                 }
     })   
 })
 
+//esta ruta me devuelve la cantidad de textos que tiene un usuario para poder darle la logica de los botones ... despues va a haber otra llamada que me permita obtener cada pagina.
+app.post('/myWritings/count',(req,res)=>{
+    console.log('entre al post mywritings.')
+    const {username,password} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
+                getTotalWritings(username)
+                .then(resDB =>{
+                    console.log("entre a este then")
+                    res.send(JSON.stringify(resDB))
+                })
+                .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
+
+//esta ruta me va a devolver los titulos con su id.
+app.post('/myWritings/tittles',(req,res)=>{
+    console.log('entre al post mywritings.')
+    const {username,password,currentPage} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
+                getWritings(username,currentPage)
+                .then(resDB =>{
+                    console.log("entre a este then")
+                    res.send(JSON.stringify(resDB))
+                })
+                .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
 
 
-//este post, va a validar la session del usuario y va a devolver la data del mismo para usarla en los distintos script de la parte del cliente. 
 
 
-//similar al anterior pero solo devuelvo el nombre del usuario, no devuelvo todos los datos.
+
+
+
 
 
 
