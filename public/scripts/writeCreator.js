@@ -38,10 +38,10 @@ submitButton.addEventListener("click",()=>{
     console.log("title: ",title.value)
     console.log("texto: ",bodytext.value)
     //aca veo que valor del radio button esta seleccionado.
-    if(RBprivate.checked){
-        RBselected = "1" //1 significa privado
+    if(RBpublic.checked){
+        RBselected = "1" //1 significa publico
     }else{
-        RBselected = "0" //0 significa publico.
+        RBselected = "0" //0 significa privado.
     } 
     
     //verifico que no intente mandar un documento sin titulo o sin cuerpo.

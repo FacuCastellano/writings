@@ -94,3 +94,12 @@ body{
 #delete-button{
     background-color: rgb(247, 92, 92);
 }
+
+
+#edit-button:disabled, #delete-button:disabled{
+    background-color: rgb(230, 236, 226);
+    color:rgb(180, 180, 180);
+    
+}
+
+

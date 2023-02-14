@@ -1,4 +1,4 @@
-console.log("hola desde mywritings.")
+console.log("hola desde publcisWritings.")
 const username = sessionStorage.getItem("username")
 const password = sessionStorage.getItem("password")
 const writingsContainer = document.getElementById("writings-container")
@@ -12,14 +12,14 @@ backButton.addEventListener("click",()=>{
 //sessionStorage.setItem("totalPagesWritings",0)
 //
 
-let myWritings = []
+let publicsWritings = []
 let totalWritings //
 let totalPages  = 1
 //parseInt(sessionStorage.getItem("totalPagesWritings"))
 let currentPage //
 
 //hago la peticion de los titulos de los escirtos que quiero mostrar.
-const url0 = "http://localhost:3000/myWritings/count"
+const url0 = "http://localhost:3000/publicsWritings/count"
 
 fetch(url0,{
     method: 'POST',
@@ -36,14 +36,13 @@ fetch(url0,{
     if((totalWritings%12) > 0){
         totalPages++
     }
-
-    //sessionStorage.setItem("totalPagesWritings",totalPages)
 })
 .catch(e => console.log(e))
 
-//defino la funcion para solicitar los titulos.
-function getPage(page){
-    const url = 'http://localhost:3000/myWritings/tittles'
+//defino la funcion para solicitar los titulos publicos-.
+function getPagePublics(page){
+    const url = 'http://localhost:3000/publicsWritings/titles'
+
     
         return  fetch(url,{
                 method: 'POST',
@@ -59,14 +58,15 @@ function getPage(page){
 function renderTitles(page){
     //primero seteo alos div de la pagina
     writingsContainer.innerHTML = ""
-    getPage(page)
+    console.log("aca vienen los publicos")
+    getPagePublics(page)
     .then(res =>{console.log(res)
-        myWritings = []
+        publicsWritings = []
         for (let p in res) {
-            myWritings.push([res[p].title,res[p].id])
+            publicsWritings.push([res[p].title,res[p].id])
             }
         //pinto los titulos.
-        myWritings.forEach(writing => {
+        publicsWritings.forEach(writing => {
             const title = writing[0]
             const id = writing[1]
             const div = document.createElement('div')
@@ -78,7 +78,6 @@ function renderTitles(page){
                 sessionStorage.setItem("currentTextID", id) //guardo el id del texto, en el sessionStorage para poder rescatarlo desde el "writing.html"
                 sessionStorage.setItem("myWritingsCurrentPage",currentPage)
                 location.href = "./writing.html"
-
                 })
             })
         })

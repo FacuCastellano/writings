@@ -114,11 +114,66 @@ function createWriting(data){
     .catch(err => console.log(err))
 }
 
-//esta funcion me dice la cantidad de escritos guardados en la que tiene un usuario. 
+//en esta funcion verifico si el escrito con cierto ID corresponde a cierto autor.. 
+function verifyAuthor(id,author){
+    query = `select author from writings where id = "${id}"`
+    return new Promise((resolve,reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
+        })
+    })
+    .then(res => res[0]['author'])
+    .then(authorName => {
+        if (authorName === author){
+            return true
+        }else {
+            return false
+        }})
+    .catch(err => console.log(err))   
+}
 
+//verifyAuthor("e44402f0-3d67-42d5-8a2d-81509924daf8","facu").then(res => console.log(res))
+
+
+
+//funcion para editar un escrito ya existente.
+function editWriting(data){
+    const {id,title,texto,public_state} = data
+    const text_number = 1 //este numero deberia representar el numero de escrito de la persona.. pero por ahora lo dejamos asi. 
+    const stage_name = '-'  //hay que agregar la funcionalidad de que se pueda firmar con el stage_name.
+    //verifico que el autor del texto sea el usuario logeado. (es decir el username.
+    
+     //Falta verificar el autor con el username (usuario logueado.)
+    
+    const query = `UPDATE writings SET title = "${title}", texto = "${texto}l", public_state = ${public_state}, date_written = now() WHERE id = "${id}";`
+    // en la query pongo el texto entre comillas dobles por que si tiene comillas simples cierra la comilla inicial y chau.. hace bardo.. 
+    //como mejoras no deberia permitir que el ningun valor tenga comillas dobles ni el author ni el stage
+    return new Promise((resolve,reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
+        })
+    })
+    .catch(err => console.log(err))   
+}
+
+
+
+//esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
 function getTotalWritings(username){
 
     const query = `select count(*) from writings where author="${username}";`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+//esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
+function getTotalPublicWritings(){
+
+    const query = `select count(*) from writings where public_state="1";`
     return new Promise((resolve, reject) => {
         connection.query(query,(_,res)=>{
             resolve(res)
@@ -142,21 +197,45 @@ function getWritings(username,page){
     .catch(e => console.log(e))
 }
 
-
-function getParticularWriting(id){
-
-    const query = `select * from writings where id="${id}" ;`
+//esta funcion me devuelve los titulos y id que esten seteados como publicos.. 
+//me va  devolver como maximo 12 elementos (estoy haciendo paginacion.)
+function getPublicsWritings(page){
+    const limit = 12
+    const offset = limit*(page-1)
+    const query = `select id, title from writings where public_state="1" order by date_written DESC limit ${limit} offset ${offset};`
     return new Promise((resolve, reject) => {
         connection.query(query,(_,res)=>{
-            console.log(res)
             resolve(res)
         })
     })
     .catch(e => console.log(e))
 }
 
-const id1 = "asd"
-getParticularWriting(id1)
+
+
+function getParticularWriting(id){
+
+    const query = `select * from writings where id="${id}" ;`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+function deleteWriting(id){
+
+    const query = `delete from writings where id = "${id}" ;`
+    return new Promise((resolve, reject) => {
+        connection.query(query,(_,res)=>{
+            resolve(res)
+        })
+    })
+    .catch(e => console.log(e))
+}
+
+
 
 
 
@@ -172,5 +251,10 @@ module.exports = {
      createWriting,
      getTotalWritings,
      getWritings,
-     getParticularWriting
+     getParticularWriting,
+     deleteWriting,
+     editWriting,
+     getTotalPublicWritings,
+     getPublicsWritings,
+     verifyAuthor
  }

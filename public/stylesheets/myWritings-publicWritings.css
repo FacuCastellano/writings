@@ -23,7 +23,13 @@ body{
     align-items: center;
     justify-content: center;
 }
+.buscador input{
+    height: 25px;
+    width: 250px;
+    font-size: 20px;
+    margin-bottom: 30px;
 
+}
 .mainContainer{
     width: 80vw;;
     display: flex;

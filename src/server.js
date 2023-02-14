@@ -6,7 +6,7 @@ const crypto = require('crypto')
 
 
 //importo modulos propios
-const { createNewUser, connection, loginUserValidation, createWriting, getTotalWritings,getWritings} = require('./js/DBcontrollers/utilsDB')
+const { createNewUser, connection, loginUserValidation, createWriting, getTotalWritings,getWritings,getParticularWriting,deleteWriting,editWriting,getTotalPublicWritings,getPublicsWritings,verifyAuthor } = require('./js/DBcontrollers/utilsDB')
 const { toJSObject} = require('./js/serverFunctions.js')
 
 console.log(path.join(__dirname,'public/views'))
@@ -74,7 +74,6 @@ app.post('/register', (req,res)=>{
 
 // logeo de usuario existente.
 app.post('/login', (req,res)=>{ 
-    console.log(req.body)
     loginUserValidation(req.body)
             .then(answerCode  =>{
                 //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
@@ -151,6 +150,35 @@ app.post('/myWritings/count',(req,res)=>{
     .catch(e => {console.log(e)})   
 })
 
+//esta ruta me devuelve la cantidad de escritos que hay con caracteristica de publicos. 
+
+app.post('/publicsWritings/count',(req,res)=>{
+    console.log('entre al post mywritings.')
+    const {username,password} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
+                getTotalPublicWritings()
+                .then(resDB =>{
+                    res.send(JSON.stringify(resDB))
+                })
+                .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
+
+
 //esta ruta me va a devolver los titulos con su id.
 app.post('/myWritings/tittles',(req,res)=>{
     console.log('entre al post mywritings.')
@@ -179,9 +207,161 @@ app.post('/myWritings/tittles',(req,res)=>{
     .catch(e => {console.log(e)})   
 })
 
+//esta ruta me va a devolver los titulos publicos con su id.
+app.post('/publicsWritings/titles',(req,res)=>{
+    const {username,password,currentPage} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
+                getPublicsWritings(currentPage)
+                .then(resDB =>{
+                    res.send(JSON.stringify(resDB))
+                })
+                .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
 
 
 
+//este post me devuelve todos los registros del texto.. despues en el front muestro lo q me interesa.
+app.post('/writing',(req,res)=>{
+    
+    const {username,password,id} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //const id = sessionStorage.getItem("currentTextID") 
+                getParticularWriting(id)
+                .then(resDB =>{
+                    res.send(JSON.stringify(resDB))
+                })
+                .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
+
+//este post me verifica si el username es el author. 
+
+app.post('/authorValidation',(req,res)=>{
+    const {username,id} = req.body
+    verifyAuthor(id,username)
+        .then(bool => {
+            if(bool === false){
+                res.sendStatus(401)
+            } else if (bool === true){
+                res.sendStatus(200)
+            }
+        })
+        .catch(e => {console.log(e)}) 
+})
+
+
+
+//este put actualiza el texto.
+
+app.put('/editWriting',(req,res)=>{
+    
+    // const dataprueba = {
+    //     username : "facu"
+    //     id : "4217587b-07c8-4e89-aaa5-6c4bd0d8628d",
+    //     title : "titulo desde utilsDB",
+    //     texto: "texto desde utilsDB",
+    //     public_state: 1
+    // }
+    const {username,password,id,title,texto,public_state} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                //const id = sessionStorage.getItem("currentTextID") 
+                //aca voy a poner la verificacion que el usuario logueado sea el autor del escrito. si es asi lo puede modificar si no no.
+                verifyAuthor(id,username)
+                    .then(bool => {
+                        if(bool === false){
+                            res.sendStatus(401)
+                        } else if (bool === true){
+                            editWriting({id,username,title,texto,public_state})
+                            .then(()=>{
+                            //no estoy considerando la opcion que el ID no exista pq el id lo saco automaticamente, no es que lo ponga el usuario.
+                            res.sendStatus(200)
+                            })
+                            .catch(e => {console.log(e)}) 
+                        }
+                    })
+                    .catch(e => {console.log(e)}) 
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
+
+
+//este post elimina un escrito..
+app.delete('/deleteWriting',(req,res)=>{
+ 
+    const {username,password,id} = req.body
+    loginUserValidation({username,password})
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                //desde el front lo tengo que redirigir.
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                //desde el front lo tengo que redirigir.
+                res.status(401)
+                res.send()
+            } else if (Array.isArray(answerCode)){
+                verifyAuthor(id,username)
+                    .then(bool => {
+                        if(bool === false){
+                            res.sendStatus(401)
+                        } else if (bool === true){
+                            deleteWriting(id)
+                            .then(()=>{
+                            //no estoy considerando la opcion que el ID no exista pq el id lo saco automaticamente, no es que lo ponga el usurio.
+                            res.sendStatus(200)
+                            })
+                            .catch(e => {console.log(e)})  
+                        }
+                    })
+                    .catch(e => {console.log(e)}) 
+                //const id = sessionStorage.getItem("currentTextID") 
+                
+            }
+    })
+    .catch(e => {console.log(e)})   
+})
+//deleteWriting()
 
 
 

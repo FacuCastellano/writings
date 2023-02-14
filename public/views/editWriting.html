@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My blog | Home</title>
+    <link rel='stylesheet' type="text/css" href='../stylesheets/writeCreator.css'/>   
+
+    <!-- <link rel='stylesheet' type="text/css" href='/home/facu/Escritorio/programacion/proyectosPropios/blog/public/stylesheets/userMain.css'/>   -->
+</head>
+<body>
+
+    <div> <!--
+    <form action="http://localhost:3000/send-writing" method="post" enctype="text/plain">  Ojo aca.. si no pongo elenctype="text/plain" los espacios me los cambia por "+"-->
+    
+        <div class="mainDiv">
+            <div class="title-container">
+                <h2>Title:</h2> <input id="title" type="text" name="title">  <!-- Ojo aca.. siempre ponerle el name al titulo.. si no no envia el contenido del input-->
+            </div>
+            
+            <div class="mainContainer">
+                <textarea name="texto" id ="bodytext" rows="25" placeholder="Escribe el texto de tu preferencia. brother"></textarea>
+                <div class="author"> <p>Author: <var id="authorName"></var></p> </div>
+            </div>
+        
+            <div class="checkbox-container">
+                
+                <p>Choose the access permition for your writing</p>
+                
+                <div class="radiobutton-container">
+                    <div>
+                        <input type="radio" id="btn-private" name="privacy" value="private">
+                        <label for="private">Private</label>
+                      </div>
+                  
+                      <div>
+                        <input type="radio" id="btn-public" name="privacy" value="public" >
+                        <label for="public">Public</label>
+                      </div>
+                      
+                </div>        
+            </div>
+             <!--<div class="btn-container">
+                <input type="button" class="btn"  value="Send" id="submit-button">
+                <br>
+                <p>your writing will be sended to your writings.</p>
+            </div> --> 
+            <div class="buttons-main-container">
+                <button class="btn-back" type="button" id="back-button" >
+                    Back 
+                </button>
+
+                <button class="btn-send" type="button" id="saveChanges-button">
+                   Save Changes
+                </button>   
+                
+            </div>
+            
+            <p>your writing will be sended to your writings.</p>
+        </div>
+    </div>
+    <!--  </form> -->
+    
+    <!-- tener en cuenta que los archivos servidos ya tienen como origen la capeta public.. no tengo que poner 
+    src = /public/scripts/file.js.. pq sino es como q esta buscando una segunda carpeta public dentro de la primera carpeta public. 
+    -->
+    <script src="../scripts/editWriting.js" type="text/javascript"></script>
+
+</body>
+</html>
