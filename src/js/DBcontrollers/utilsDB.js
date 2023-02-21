@@ -159,11 +159,11 @@ function editWriting(data){
 
 
 //esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
-function getTotalWritings(username){
-
+function getTotalWritings(username,word = ""){
+    const query1 = `select count(*) from writings where author="${username}" and title like "%${word}%";`
     const query = `select count(*) from writings where author="${username}";`
     return new Promise((resolve, reject) => {
-        connection.query(query,(_,res)=>{
+        connection.query(query1,(_,res)=>{
             resolve(res)
         })
     })
@@ -171,11 +171,11 @@ function getTotalWritings(username){
 }
 
 //esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
-function getTotalPublicWritings(){
-
+function getTotalPublicWritings(word = ""){
+    const query1 = `select count(*) from writings where public_state="1" and (author like "%${word}%" or title like "%${word}%" );`
     const query = `select count(*) from writings where public_state="1";`
     return new Promise((resolve, reject) => {
-        connection.query(query,(_,res)=>{
+        connection.query(query1,(_,res)=>{
             resolve(res)
         })
     })
@@ -185,12 +185,13 @@ function getTotalPublicWritings(){
 
 //esta funcion me devuelve los titulos y id de los distintos writings del usuario. 
 //me va  devolver como maximo 12 elementos (estoy haciendo paginacion.)
-function getWritings(username,page){
+function getWritings(username,page,word=""){
     const limit = 12
     const offset = limit*(page-1)
+    const query1 = `select id, title from writings where author="${username}" and title like "%${word}%" order by date_written DESC limit ${limit} offset ${offset};`
     const query = `select id, title from writings where author="${username}" order by date_written DESC limit ${limit} offset ${offset};`
     return new Promise((resolve, reject) => {
-        connection.query(query,(_,res)=>{
+        connection.query(query1,(_,res)=>{
             resolve(res)
         })
     })
@@ -199,12 +200,13 @@ function getWritings(username,page){
 
 //esta funcion me devuelve los titulos y id que esten seteados como publicos.. 
 //me va  devolver como maximo 12 elementos (estoy haciendo paginacion.)
-function getPublicsWritings(page){
+function getPublicsWritings(page,word = ""){
     const limit = 12
     const offset = limit*(page-1)
+    const query1 = `select id, title from writings where public_state="1" and (author like "%${word}%" or title like "%${word}%") order by date_written DESC limit ${limit} offset ${offset} ;`
     const query = `select id, title from writings where public_state="1" order by date_written DESC limit ${limit} offset ${offset};`
     return new Promise((resolve, reject) => {
-        connection.query(query,(_,res)=>{
+        connection.query(query1,(_,res)=>{
             resolve(res)
         })
     })

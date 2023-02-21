@@ -9,7 +9,10 @@ const deleteBtn = document.getElementById("delete-button")
 const editBtn = document.getElementById("edit-button")
 
 textTitle.textContent = "Not Data"
-textBody.textContent = "Not Data"
+textBody.innerText  = "Not Data"
+
+
+
 
 //hago la peticion del texto que tengo que mostarar. y muestro su titulo y su contenido.
 const url = "http://localhost:3000/writing"
@@ -26,7 +29,8 @@ fetch(url,{
 .then((data)=>{
     const textObject = data
     textTitle.textContent = textObject.title
-    textBody.textContent = textObject.texto
+    textBody.innerText = textObject.texto
+
 })
 .catch(e => console.log(e))
 
@@ -83,3 +87,7 @@ fetch("http://localhost:3000/authorValidation",{
     }
 })
 .catch(e => console.log(e))
+
+
+
+

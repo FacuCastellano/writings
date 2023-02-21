@@ -72,6 +72,27 @@ body{
 .arrowRight:hover{
     border-left:70px solid rgb(241, 234, 135);
 }
+/*estilo de las flechas inactivas.*/
+/*flecha izq*/
+ .inactive.arrowLeft{
+    border-right:70px solid rgb(206, 201, 201);
+}
+.inactive.arrowLeft:hover{
+    border-right:70px solid tomato;
+}
+.inactive.arrowLeft:active{
+    scale: 1;
+}
+/*flecha der*/
+.inactive.arrowRight{
+    border-left:70px solid rgb(206, 201, 201);
+}
+.inactive.arrowRight:hover{
+    border-left:70px solid tomato;
+}
+.inactive.arrowRight:active{
+    scale: 1;
+}
 
 /*estilo de los escritos.*/
 

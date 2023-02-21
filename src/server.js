@@ -41,7 +41,6 @@ app.set('views',path.join(__dirname,'../public/views/ejsViews')) //segundo seteo
 //rutas GET
 
 app.get('/', (req, res) => {
-    console.log('redirigiendo a public/views/index.html')
     res.redirect('views/index.html')
 })
 
@@ -53,11 +52,9 @@ app.get('/', (req, res) => {
 //rutas POST
 // registro de nuevo usuario
 app.post('/register', (req,res)=>{
-    console.log("entro")
     let body= ''
     req.on('data', chunk =>{body += chunk})
     req.on('end', ()=>{
-        console.log("entro2")
         body = toJSObject(body) //esta es una funcion propia que esta en el modulo serverFunctions.js
         // esta funcion necesita que exista una conexion a la BD y devuelvuelve 'failure'(si el usuario ya existe) o 'success' (si el usuario es creado con existo)         
         createNewUser(body)
@@ -124,8 +121,7 @@ app.post('/writeCreator', (req, res) => {
 
 //esta ruta me devuelve la cantidad de textos que tiene un usuario para poder darle la logica de los botones ... despues va a haber otra llamada que me permita obtener cada pagina.
 app.post('/myWritings/count',(req,res)=>{
-    console.log('entre al post mywritings.')
-    const {username,password} = req.body
+    const {username,password,word} = req.body
     loginUserValidation({username,password})
         .then(answerCode  =>{
             //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
@@ -139,7 +135,7 @@ app.post('/myWritings/count',(req,res)=>{
                 res.send()
             } else if (Array.isArray(answerCode)){
                 //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
-                getTotalWritings(username)
+                getTotalWritings(username,word)
                 .then(resDB =>{
                     console.log("entre a este then")
                     res.send(JSON.stringify(resDB))
@@ -153,8 +149,7 @@ app.post('/myWritings/count',(req,res)=>{
 //esta ruta me devuelve la cantidad de escritos que hay con caracteristica de publicos. 
 
 app.post('/publicsWritings/count',(req,res)=>{
-    console.log('entre al post mywritings.')
-    const {username,password} = req.body
+    const {username,password,word} = req.body
     loginUserValidation({username,password})
         .then(answerCode  =>{
             //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
@@ -168,7 +163,7 @@ app.post('/publicsWritings/count',(req,res)=>{
                 res.send()
             } else if (Array.isArray(answerCode)){
                 //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
-                getTotalPublicWritings()
+                getTotalPublicWritings(word)
                 .then(resDB =>{
                     res.send(JSON.stringify(resDB))
                 })
@@ -181,8 +176,7 @@ app.post('/publicsWritings/count',(req,res)=>{
 
 //esta ruta me va a devolver los titulos con su id.
 app.post('/myWritings/tittles',(req,res)=>{
-    console.log('entre al post mywritings.')
-    const {username,password,currentPage} = req.body
+    const {username,password,currentPage,word} = req.body
     loginUserValidation({username,password})
         .then(answerCode  =>{
             //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
@@ -196,9 +190,8 @@ app.post('/myWritings/tittles',(req,res)=>{
                 res.send()
             } else if (Array.isArray(answerCode)){
                 //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
-                getWritings(username,currentPage)
+                getWritings(username,currentPage,word)
                 .then(resDB =>{
-                    console.log("entre a este then")
                     res.send(JSON.stringify(resDB))
                 })
                 .catch(e => {console.log(e)}) 
@@ -209,7 +202,7 @@ app.post('/myWritings/tittles',(req,res)=>{
 
 //esta ruta me va a devolver los titulos publicos con su id.
 app.post('/publicsWritings/titles',(req,res)=>{
-    const {username,password,currentPage} = req.body
+    const {username,password,currentPage,word} = req.body
     loginUserValidation({username,password})
         .then(answerCode  =>{
             //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
@@ -223,7 +216,7 @@ app.post('/publicsWritings/titles',(req,res)=>{
                 res.send()
             } else if (Array.isArray(answerCode)){
                 //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
-                getPublicsWritings(currentPage)
+                getPublicsWritings(currentPage,word)
                 .then(resDB =>{
                     res.send(JSON.stringify(resDB))
                 })
