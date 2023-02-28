@@ -2,7 +2,8 @@
 it's about a web app where you can save your writings and you can read publics writings from another people.
 
 1) clonar el repositorio:
->git clone git@github.com:FacuCastellano/writings.git
+
+con https
 >git clone https://github.com/FacuCastellano/writings.git
 
 
