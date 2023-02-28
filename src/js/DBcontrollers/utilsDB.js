@@ -1,53 +1,86 @@
-console.log('ejecuta el script de la conexion')
+console.log('ejecuta el script de la conexion a base de datos')
 
 const mysql = require('mysql2')
 
+
+// const connection = mysql.createConnection({
+//     host : 'localhost',
+//     user : 'blogadmin',
+//     password : 'pass1234',
+//     database : 'blog_db'
+// })
+
+//aca conecto con la base de datos de la plataforma PLANETSCALE.
 const connection = mysql.createConnection({
-    host : 'localhost',
-    user : 'blogadmin',
-    password : 'pass1234',
-    database : 'blog_db'
+    host : 'us-east.connect.psdb.cloud',
+    user : '5dvfuzmflw7wxzfesz94',
+    password : 'pscale_pw_jQkeZrU8nabHMVJq81EoFK9G4i19hhjIWqAJH0uUFqB',
+    database : 'writingsdb',
+    ssl:{
+        rejectUnauthorized: false
+    }
 })
-
-
 
 //creo la funcion para crear un nuevo usuario en la base de datos.
 
 //asi son los datos que obteno del formulario post pasarlos por la funcion ToJSON . 
 // const data = {
-//     user_name: 'Facuntano',
+//     user_name: 'Facucaste',
 //     real_name: 'Facundo',
 //     real_surname: 'Caastellno',
-//     email: 'castellanofacundo@gmail.com',
-//     pass1: 'facu1234',
-//     pass2: 'facu1234'
+//     email: 'blabla@gmail.com',
+//     pass1: '1234',
+//     pass2: '1234'
 //   }
 
 // funcion para crear un nuevo usuario.
 
-function createNewUser(data){
-    
-    const {user_name:username, real_name:name, real_surname: lastname, pass1 : pass, email} = data
-    const query = `select * from users where username='${username}';`
+function verifyUserExistence(username){
+
+    const query = `select count(*) from users where username='${username}';`
     return  new Promise((resolve,reject) => {
         // connection.conect() lo hago desde el script que creo el servidor. cuando llamo esta funcion la coneccion ya debe estar hecha.
         connection.query(query,(_,res)=>{
             resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
         })
     })
+    .then(res =>{
+        if(res[0]['count(*)']){
+            return true
+        }else {
+            return false
+        }
+    })
+    .catch(e => console.log(e))
+}
+
+//a = verifyUserExistence("tofeta")
+//setTimeout(()=> console.log(a),1000)
+
+
+
+function createNewUser(data){
+    
+    const {username:username, firstname:name, lastname: lastname, password : pass, email} = data
+    const query0 = `select * from users where username='${username}';`
+    return  new Promise((resolve,reject) => {
+        // connection.conect() lo hago desde el script que creo el servidor. cuando llamo esta funcion la coneccion ya debe estar hecha.
+        connection.query(query0,(_,res)=>{
+            resolve(res) //una vez resuleta la promesa con exito envio lo que esta dendtro del resolve.. es como un tipo return pero para promesas.
+        })
+    })
     .then(res => {
         if(res.length){
-            console.log('usuario existente') //aca deberia buscarle una mejor solucion pero bueno.
+         //esto seria un usuario existente, aca deberia buscarle una mejor solucion pero bueno.
             return 'failure'
         }else {
             return new Promise((resolve,reject)=>{
-                    const query = `INSERT INTO users VALUES ('${username}','${lastname}','${name}','${email}','${pass}') `
-                    connection.query(query,(_,res)=>{
+                    const query1 = `INSERT INTO users VALUES ('${username}','${lastname}','${name}','${email}','${pass}') `
+                    connection.query(query1,(_,res)=>{
                         resolve() //aunque no haga no devuelva nada tengo que poner el resolve(), pq sino la promesa nunca se termina de completar. es decir esta esperando el resolve() para terminarse.
                     })
                 })
                 .then(()=>{
-                console.log('usuario creado con exito')
                 return 'success'
             })
             .catch(err => console.log(err))
@@ -56,7 +89,7 @@ function createNewUser(data){
     .catch(err => console.log(err))
 }
 
-  
+
 
 function loginUserValidation(data){
     //const {user_name:username, pass} = data
@@ -161,7 +194,7 @@ function editWriting(data){
 //esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
 function getTotalWritings(username,word = ""){
     const query1 = `select count(*) from writings where author="${username}" and title like "%${word}%";`
-    const query = `select count(*) from writings where author="${username}";`
+    //const query = `select count(*) from writings where author="${username}";`
     return new Promise((resolve, reject) => {
         connection.query(query1,(_,res)=>{
             resolve(res)
@@ -173,7 +206,7 @@ function getTotalWritings(username,word = ""){
 //esta funcion me devuelve la cantidad total de escritos de una autor (autor = username)
 function getTotalPublicWritings(word = ""){
     const query1 = `select count(*) from writings where public_state="1" and (author like "%${word}%" or title like "%${word}%" );`
-    const query = `select count(*) from writings where public_state="1";`
+    //const query = `select count(*) from writings where public_state="1";`
     return new Promise((resolve, reject) => {
         connection.query(query1,(_,res)=>{
             resolve(res)
@@ -189,7 +222,7 @@ function getWritings(username,page,word=""){
     const limit = 12
     const offset = limit*(page-1)
     const query1 = `select id, title from writings where author="${username}" and title like "%${word}%" order by date_written DESC limit ${limit} offset ${offset};`
-    const query = `select id, title from writings where author="${username}" order by date_written DESC limit ${limit} offset ${offset};`
+    //const query = `select id, title from writings where author="${username}" order by date_written DESC limit ${limit} offset ${offset};`
     return new Promise((resolve, reject) => {
         connection.query(query1,(_,res)=>{
             resolve(res)
@@ -212,8 +245,6 @@ function getPublicsWritings(page,word = ""){
     })
     .catch(e => console.log(e))
 }
-
-
 
 function getParticularWriting(id){
 
@@ -258,5 +289,6 @@ module.exports = {
      editWriting,
      getTotalPublicWritings,
      getPublicsWritings,
-     verifyAuthor
+     verifyAuthor,
+     verifyUserExistence
  }

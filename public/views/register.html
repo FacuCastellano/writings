@@ -17,35 +17,46 @@
         </div>
             
         <div class="login-body">
-            <form action="http://localhost:3000/register" method="post">
-
+            <div  id="form-container">
+                <!--  action="http://localhost:3000/register"   -->
                 <div class="login-generic-camp">
-                    <input type="text" id="register-username" name="user-name" required placeholder="User name (you'll login with this name)" autofocus>
+                    <input type="text" id="register-username-1" name="user-name" required placeholder="user name (you'll login with this name)" autofocus>
+                </div>
+                <p id="warning-1" class="warning" hidden>* this username is already exist.</p>
+                <div class="login-generic-camp">
+                    <input type="text" id="register-username-2" name="user-name" required placeholder="please repeat your user name" >
+                </div>
+                <p id="warning-2" class="warning" hidden>* both username fields must match.</p>
+                <div class="login-generic-camp">
+                    <input type="text" id="register-real-name" name="real-name" required placeholder="name" >
+                </div>
+                <p id="warning-3" class="warning" hidden>* some character is not valid.</p>
+                <div class="login-generic-camp">
+                    <input type="text" id="register-real-surname" name="real-surname" required placeholder="lastname" >
+                </div>
+                <p id="warning-4" class="warning" hidden>* some character is not valid.</p>
+                <div class="login-generic-camp">
+                    <input type="email" id="register-email" name="email" required placeholder="email" >
+                </div>
+                <p id="warning-5" class="warning" hidden>* this mail is not valid.</p>
+                <div class="login-generic-camp">
+                    <input type="password" id="password-1" name="pass1" required placeholder="choose a password" >
                 </div>
                 <div class="login-generic-camp">
-                    <input type="text" id="register-real-name" name="real-name" required placeholder="Name" autofocus>
+                    <input type="password" id="password-2" name="pass2" required placeholder="repeat your password" >
                 </div>
-                <div class="login-generic-camp">
-                    <input type="text" id="register-real-surname" name="real-surname" required placeholder="lastname" autofocus>
-                </div>
-                <div class="login-generic-camp">
-                    <input type="email" id="register-email" name="email" required placeholder="email" autofocus>
-                </div>
-                <div class="login-generic-camp">
-                    <input type="password" id="password-1" name="pass1" required placeholder="choose a password" autofocus>
-                </div>
-                <div class="login-generic-camp">
-                    <input type="password" id="password-2" name="pass2" required placeholder="repeat your password" autofocus>
-                </div>
+                <p id="warning-6" class="warning" hidden>* the passwords don't match</p>
+                
+                
                 <div class="login-generic-camp login-btn-container">
-                    <input type="submit" class="btn"  value="Send">
+                    <input type="submit" class="btn disabled" id="btn-submit"  value="Send">
                     <br>
                     <p>If you already have an account <a href="./index.html"> login here.</a></p>
                 </div>
 
-            </form>
+            </div>
         </div>  
     </div>
-    
+    <script src="../scripts/register.js"></script>
 </body>
 </html>

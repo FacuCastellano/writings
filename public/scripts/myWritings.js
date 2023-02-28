@@ -79,7 +79,7 @@ function getPage(page){
 
 function renderTitles(page){
     //primero seteo alos div de la pagina
-    writingsContainer.innerHTML = ""
+    
     getCount()
     .then(
         getPage(page)
@@ -89,6 +89,7 @@ function renderTitles(page){
                 myWritings.push([res[p].title,res[p].id])
                 }
             //pinto los titulos.
+            writingsContainer.innerHTML = ""
             myWritings.forEach(writing => {
                 const title = writing[0]
                 const id = writing[1]
@@ -100,6 +101,7 @@ function renderTitles(page){
                 div.addEventListener('click',()=>{
                     sessionStorage.setItem("currentTextID", id) //guardo el id del texto, en el sessionStorage para poder rescatarlo desde el "writing.html"
                     sessionStorage.setItem("myWritingsCurrentPage",currentPage)
+                    sessionStorage.setItem('backLocation','myWritings.html')
                     location.href = "./writing.html"
                     })
             })
@@ -135,8 +137,6 @@ rightButton.addEventListener('click',()=>{
 })
 
 function toggleArrow(){
-    console.log("currentPage: ",currentPage)
-    console.log("totalPages: ",totalPages)
     if(currentPage === 1){
         leftButton.classList.add("inactive")
     }else{

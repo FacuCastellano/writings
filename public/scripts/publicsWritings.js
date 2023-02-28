@@ -33,11 +33,8 @@ function getCountPublics(){
             .then(res => res.json())        
             .then((data) => data[0]["count(*)"]) 
             .then((count)=>{
-                console.log("count: ",count)
                 totalWritings = count;
-                console.log("totalWritings: ",totalWritings)
                 totalPages = Math.floor(totalWritings/12)
-                console.log("las paginas son: ",totalPages)
                 if((totalWritings%12) > 0){
                     totalPages++
                 }
@@ -63,11 +60,12 @@ function getPagePublics(page){
 
 function renderTitles(page){
     //primero seteo alos div de la pagina
-    writingsContainer.innerHTML = ""
+    
     getCountPublics()
     .then(()=>{
         getPagePublics(page)
         .then(res =>{console.log(res)
+            writingsContainer.innerHTML = ""
             publicsWritings = []
             for (let p in res) {
                 publicsWritings.push([res[p].title,res[p].id])
@@ -84,8 +82,10 @@ function renderTitles(page){
                 div.addEventListener('click',()=>{
                     sessionStorage.setItem("currentTextID", id) //guardo el id del texto, en el sessionStorage para poder rescatarlo desde el "writing.html"
                     sessionStorage.setItem("myWritingsCurrentPage",currentPage)
+                    sessionStorage.setItem('backLocation','publicsWritings.html')
                     location.href = "./writing.html"
-                    })
+                    
+                })
             })
             toggleArrow()
         })
@@ -111,8 +111,7 @@ const leftButton = document.getElementById("leftButton")
 const rightButton = document.getElementById("rightButton")
 
 function toggleArrow(){
-    console.log("currentPage: ",currentPage)
-    console.log("totalPages: ",totalPages)
+
     if(currentPage === 1){
         leftButton.classList.add("inactive")
     }else{

@@ -1,3 +1,2 @@
-const a = '"'
-const b = "''"
-console.log(a == b)
+//script para pruebas varias.
+console.log("hola mundo")

@@ -1,4 +1,3 @@
-console.log("hola desde Edit Writing 23.")
 const backBtn = document.getElementById('back-button')
 const saveChangesBtn = document.getElementById('saveChanges-button')
 const inputTitle = document.getElementById('title')
@@ -63,7 +62,6 @@ saveChangesBtn.addEventListener('click',()=>{
     }else if(document.getElementById('btn-private').checked){
         newPublicState = 0
     }
-    console.log('---- nuevos datos ----')
 
     fetch('http://localhost:3000/editWriting',{
         method: 'PUT',

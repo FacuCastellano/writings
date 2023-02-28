@@ -6,10 +6,10 @@ const crypto = require('crypto')
 
 
 //importo modulos propios
-const { createNewUser, connection, loginUserValidation, createWriting, getTotalWritings,getWritings,getParticularWriting,deleteWriting,editWriting,getTotalPublicWritings,getPublicsWritings,verifyAuthor } = require('./js/DBcontrollers/utilsDB')
-const { toJSObject} = require('./js/serverFunctions.js')
+const { createNewUser, connection, loginUserValidation, createWriting, getTotalWritings,getWritings,getParticularWriting,deleteWriting,editWriting,getTotalPublicWritings,getPublicsWritings,verifyAuthor,verifyUserExistence} = require('./js/DBcontrollers/utilsDB')
 
-console.log(path.join(__dirname,'public/views'))
+
+//console.log(path.join(__dirname,'public/views'))
 
 //conexion a la base de datos.
 //aca creo la conexion si la creo en el servidor.. cuando se quiere intentar conectar 2 veces tira error
@@ -45,45 +45,53 @@ app.get('/', (req, res) => {
 })
 
 
-
+app.post('/verifyuserexistence',(req,res)=>{
+    const {username} = req.body
+    verifyUserExistence(username)
+        .then(answer => {
+            if(answer){
+                res.status(401) //aca el usuario Si existe, por lo que NO podes crearlo.
+                res.end()
+            }else{
+                res.status(200) //aca el usuario No existe, por lo que Si podes crearlo.
+                res.end()
+            }
+        })
+})
 
 
 
 //rutas POST
 // registro de nuevo usuario
 app.post('/register', (req,res)=>{
-    let body= ''
-    req.on('data', chunk =>{body += chunk})
-    req.on('end', ()=>{
-        body = toJSObject(body) //esta es una funcion propia que esta en el modulo serverFunctions.js
-        // esta funcion necesita que exista una conexion a la BD y devuelvuelve 'failure'(si el usuario ya existe) o 'success' (si el usuario es creado con existo)         
-        createNewUser(body)
-            .then(answerCode  =>{
-                console.log('answerCode: ',answerCode)
-                if(answerCode === 'failure'){
-                    res.redirect('views/userExistent.html')
-                } else if (answerCode === 'success'){
-                    res.redirect('./views/newUserCreated.html')
-                }
-            }) 
-    })
+    const {username, firstname, lastname, password, email} = req.body
+    createNewUser({username, firstname, lastname, password, email})
+        .then(answerCode  =>{
+            if(answerCode === 'failure'){
+                //nunca va a entrar aca salvo saquen modifiquen ("hackeen") script del front
+                res.redirect('views/userExistent.html')
+            } else if (answerCode === 'success'){
+                res.sendStatus(200)
+            }
+        })
+        .catch(e => {console.log(e)})
 })
 
 // logeo de usuario existente.
 app.post('/login', (req,res)=>{ 
     loginUserValidation(req.body)
-            .then(answerCode  =>{
-                //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
-                if(answerCode === 404){
-                    res.status(404)
-                    res.end()
-                } else if (answerCode === 401){
-                    res.status(401)
-                    res.end()
-                } else if (Array.isArray(answerCode)){
-                    res.status(200)
-                    res.end()
-                }
+        .then(answerCode  =>{
+            //segun el caso retorno un msj distinto.. segun el msj el navegador hara una cosa u otra.
+            if(answerCode === 404){
+                res.status(404)
+                res.end()
+            } else if (answerCode === 401){
+                res.status(401)
+                res.end()
+            } else if (Array.isArray(answerCode)){
+                res.status(200)
+                res.end()
+            }
     }) 
 
 })
@@ -109,7 +117,6 @@ app.post('/writeCreator', (req, res) => {
                     let {title, texto} = req.body
                     title = title.replaceAll('"', "''") //reemplazo las comillas dobles por las simples (cada comilla doble la reemplazo por 2 comillas simples)para que no interfiera en la query que se le hace a la BD. y simulen ser dos comillas dobles.
                     texto = texto.replaceAll('"', "''") 
-                    console.log(title,texto)
                     const id = crypto.randomUUID() //genera un id unico .. hay muchas librerias que hacen esto pero esta ya viene con JS.
                     data = {id,username,title,texto,public_state,id}
                     createWriting(data)
@@ -137,7 +144,6 @@ app.post('/myWritings/count',(req,res)=>{
                 //devuelvo un objeto solo con el valor del parametro "count(*)" que representa la cantidad de escritos guardados por el usuario en la base de datos. 
                 getTotalWritings(username,word)
                 .then(resDB =>{
-                    console.log("entre a este then")
                     res.send(JSON.stringify(resDB))
                 })
                 .catch(e => {console.log(e)}) 

@@ -56,8 +56,19 @@ input{
     border-radius: 5px;
     background-color: cornflowerblue;
 }
+
+
+
 .btn:active{
     transform:scale(0.95)
+}
+
+.btn.disabled{
+    background-color: rgb(217, 220, 226);
+    color:rgb(146, 148, 148)
+}
+.btn.disabled:active{
+    transform:none
 }
 
 .login-btn-container{
@@ -75,4 +86,13 @@ input{
     font-size: 16px;
     text-decoration: none;
     color: rgb(156, 67, 156)
+}
+
+/* aca estilizo los warnings */
+.warning{
+    font-size: 15px;
+    color: rgb(241, 47, 47);
+    font-weight: 500;
+    margin: 0px;
+    padding: 0px;
 }

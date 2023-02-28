@@ -1,4 +1,4 @@
-console.log("hola desde writing.")
+
 const username = sessionStorage.getItem("username")
 const password = sessionStorage.getItem("password")
 const id = sessionStorage.getItem("currentTextID")
@@ -7,7 +7,7 @@ const textBody = document.getElementById('text-body')
 const backBtn = document.getElementById("back-button")
 const deleteBtn = document.getElementById("delete-button")
 const editBtn = document.getElementById("edit-button")
-
+const author = document.getElementById("author-name")
 textTitle.textContent = "Not Data"
 textBody.innerText  = "Not Data"
 
@@ -30,14 +30,15 @@ fetch(url,{
     const textObject = data
     textTitle.textContent = textObject.title
     textBody.innerText = textObject.texto
-
+    author.innerText = `Author: ${textObject.author}` 
 })
 .catch(e => console.log(e))
 
 //le doy funcionalidad al boton back
 
 backBtn.addEventListener('click',()=>{
-    location.href = "./myWritings.html"
+    location.href = sessionStorage.getItem('backLocation')
+    
 })
 
 

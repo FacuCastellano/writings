@@ -59,6 +59,22 @@ body{
 .text-container p{
     line-height : 25px;
 }
+
+.author-container{
+    margin-top: 0px;
+    padding: 10px ;
+    width: 100%;
+    height: 45px;
+    text-decoration:none;
+    background-color:transparent;
+    border-top:2px solid black; 
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-transform: capitalize;
+}
+
+
 /*estilos del boton  back y submit*/
 
 .buttons-main-container{
